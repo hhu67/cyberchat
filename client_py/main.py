@@ -18,7 +18,7 @@ class CyberChat:
         self.active_chat_socket = None
         self.chat_active = False
         self.dpi_mode = False
-        self.proxy_port = 1080  # Default port
+        self.proxy_port = None  # Will be set dynamically
 
     def load_config(self):
         """

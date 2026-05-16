@@ -47,16 +47,24 @@ class StrategyChecker:
             ["go", "run", self.go_proxy_path, f"--fragment={scenario}"],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
+            text=True,
         )
 
-        # Wait for the proxy to start
+        # Wait for the proxy to start and print the port
         time.sleep(2)
+
+        # Read the selected port from stdout
+        proxy_port = 1080  # Default port
+        if proxy_process.stdout:
+            output = proxy_process.stdout.readline()
+            if output.startswith("PROXY_PORT:"):
+                proxy_port = int(output.split(":")[1].strip())
 
         # Test each Tor directory authority
         for host, port in self.tor_directory_authorities:
             try:
                 # Configure the socket to use the SOCKS5 proxy
-                socks.set_default_proxy(socks.SOCKS5, "127.0.0.1", 1080)
+                socks.set_default_proxy(socks.SOCKS5, "127.0.0.1", proxy_port)
                 socket.socket = socks.socksocket
 
                 # Start the timer
