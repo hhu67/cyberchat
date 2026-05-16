@@ -1,0 +1,51 @@
+# Компилированные файлы
+*.exe
+*.so
+*.dll
+*.class
+
+# Логи и временные файлы
+*.log
+*.tmp
+*.swp
+
+# Директории
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Виртуальное окружение Python
+venv/
+.env/
+
+# Файлы конфигурации IDE
+.idea/
+.vscode/
+*.iml
+
+# Файлы зависимостей
+node_modules/
+
+# Файлы сборки
+build/
+dist/
+
+# Локальные файлы конфигурации
+env/
+.env
+
+# Ключи и сертификаты
+keys/
+hidden_service/
+*.pem
+*.key
+
+# Архивы
+*.tar.gz
+*.zip
+
+# Файлы Go
+go.mod
+go.sum
+

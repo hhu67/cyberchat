@@ -1,0 +1,28 @@
+# Go
+*.exe
+*.so
+*.dll
+*.class
+
+# Логи и временные файлы
+*.log
+*.tmp
+
+# Файлы сборки
+build/
+dist/
+
+# Ключи и сертификаты
+keys/
+hidden_service/
+*.pem
+*.key
+
+# Файлы конфигурации IDE
+.idea/
+.vscode/
+
+# Файлы зависимостей
+go.mod
+go.sum
+

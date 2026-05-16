@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Виртуальное окружение
+venv/
+.env/
+
+# Файлы конфигурации IDE
+.idea/
+.vscode/
+
+# Логи и временные файлы
+*.log
+*.tmp
+
+# Файлы сборки
+build/
+dist/
+
+# Ключи и сертификаты
+keys/
+hidden_service/
+*.pem
+*.key
+
+# Архивы
+*.tar.gz
+*.zip
+
