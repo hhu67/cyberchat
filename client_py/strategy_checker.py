@@ -21,7 +21,7 @@ class StrategyChecker:
         """
         Load the list of DPI bypass strategies from proxy_list.json.
         """
-        with open("../proxy_list.json", "r") as f:
+        with open("proxy_list.json", "r") as f:
             self.proxy_list = json.load(f)
 
     def test_strategy(self, scenario):

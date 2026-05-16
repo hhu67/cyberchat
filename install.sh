@@ -5,8 +5,8 @@ echo "Установка зависимостей..."
 sudo apt-get update
 sudo apt-get install -y python3 python3-pip python3-venv golang-go git curl
 
-# Клонирование репозитория
-echo "Клонирование репозитория..."
+# Клонирование или обновление репозитория
+echo "Обновление репозитория..."
 if [ -d "cyberchat" ]; then
     echo "Директория cyberchat уже существует. Обновляем репозиторий..."
     cd cyberchat
@@ -17,8 +17,10 @@ else
 fi
 
 # Создание и активация виртуального окружения для Python
-echo "Создание виртуального окружения для Python..."
-python3 -m venv venv
+echo "Настройка виртуального окружения для Python..."
+if [ ! -d "venv" ]; then
+    python3 -m venv venv
+fi
 source venv/bin/activate
 
 # Установка Python зависимостей
@@ -40,9 +42,11 @@ echo "Копирование бинарника в /usr/local/bin..."
 sudo cp backend_go/cyberchat /usr/local/bin/cyberchat
 sudo chmod +x /usr/local/bin/cyberchat
 
-# Добавление команды в ~/.bashrc
-echo "Добавление команды в ~/.bashrc..."
-echo 'alias cyberchat=\"cyberchat\"' >> ~/.bashrc
+# Добавление команды в ~/.bashrc (если ещё не добавлена)
+if ! grep -q "alias cyberchat" ~/.bashrc; then
+    echo "Добавление команды в ~/.bashrc..."
+    echo 'alias cyberchat=\"cyberchat\"' >> ~/.bashrc
+fi
 source ~/.bashrc
 
-echo "Установка завершена! Теперь вы можете запускать проект командой 'cyberchat'."
+echo "Обновление завершено! Теперь вы можете запускать проект командой 'cyberchat'."

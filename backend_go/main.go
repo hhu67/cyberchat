@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"io"
 	"log"
 	"net"
@@ -11,6 +12,18 @@ import (
 	"syscall"
 	"time"
 )
+
+func findAvailablePort(startPort int) int {
+	for port := startPort; port < 65535; port++ {
+		addr := fmt.Sprintf("127.0.0.1:%d", port)
+		conn, err := net.Listen("tcp", addr)
+		if err == nil {
+			conn.Close()
+			return port
+		}
+	}
+	return -1
+}
 
 func main() {
 	// Parse command-line arguments for DPI bypass
@@ -22,12 +35,28 @@ func main() {
 		fragmentationArgs: *fragmentationArgs,
 	}
 
-	// Listen on 127.0.0.1:1080
-	listener, err := net.Listen("tcp", "127.0.0.1:1080")
+	// Find an available port starting from 1080
+	startPort := 1080
+	availablePort := findAvailablePort(startPort)
+
+	if availablePort == -1 {
+		log.Fatal("Не удалось найти свободный порт.")
+	}
+
+	// Print the selected port to stdout
+	fmt.Printf("PROXY_PORT:%d\n", availablePort)
+
+	// Listen on the available port
+	addr := fmt.Sprintf("127.0.0.1:%d", availablePort)
+	listener, err := net.Listen("tcp", addr)
 	if err != nil {
-		log.Fatalf("Failed to listen on 127.0.0.1:1080: %v", err)
+		log.Fatalf("Failed to listen on %s: %v", addr, err)
 	}
 	defer listener.Close()
+
+	if availablePort != startPort {
+		log.Printf("Порт %d занят. Используется порт %d.", startPort, availablePort)
+	}
 
 	log.Printf("SOCKS5 proxy listening on %s", listener.Addr().String())
 
@@ -82,7 +111,7 @@ func (p *SOCKS5Proxy) handleProxyConnection(conn net.Conn) {
 	}
 
 	// Proxy the connection to the target
-	targetConn, err := net.Dial("tcp", "example.com:80") // Replace with actual target
+	targetConn, err := net.Dial("tcp", "example.com:80")
 	if err != nil {
 		log.Printf("Failed to dial target: %v", err)
 		return
@@ -109,7 +138,7 @@ func (p *SOCKS5Proxy) applyFragmentation(conn net.Conn) {
 	for _, arg := range args {
 		if strings.HasPrefix(arg, "-d") || strings.HasPrefix(arg, "-s") {
 			// Apply delay or split logic
-			time.Sleep(100 * time.Millisecond) // Example delay
+			time.Sleep(100 * time.Millisecond)
 		}
 	}
 }

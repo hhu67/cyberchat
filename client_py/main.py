@@ -18,6 +18,7 @@ class CyberChat:
         self.active_chat_socket = None
         self.chat_active = False
         self.dpi_mode = False
+        self.proxy_port = 1080  # Default port
 
     def load_config(self):
         """
@@ -38,9 +39,22 @@ class CyberChat:
             ["go", "run", self.go_proxy_path, f"--fragment={scenario}"],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
+            text=True,
         )
-        time.sleep(2)  # Wait for the proxy to start
-        print("Go proxy started.")
+
+        # Wait for the proxy to start and print the port
+        time.sleep(2)
+
+        # Read the selected port from stdout
+        if self.proxy_process.stdout:
+            output = self.proxy_process.stdout.readline()
+            if output.startswith("PROXY_PORT:"):
+                self.proxy_port = int(output.split(":")[1].strip())
+                print(f"Go proxy started on port {self.proxy_port}.")
+            else:
+                print("Go proxy started (port not found in output).")
+        else:
+            print("Go proxy started (no output).")
 
     def stop_go_proxy(self):
         """
