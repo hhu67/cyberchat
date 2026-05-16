@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"math/rand"
 	"net"
 	"os"
 	"os/signal"
@@ -13,7 +14,11 @@ import (
 	"time"
 )
 
-func findAvailablePort(startPort int) int {
+func findAvailablePort() int {
+	// Generate a random starting port
+	rand.Seed(time.Now().UnixNano())
+	startPort := 1024 + rand.Intn(64511) // Random port between 1024 and 65535
+
 	for port := startPort; port < 65535; port++ {
 		addr := fmt.Sprintf("127.0.0.1:%d", port)
 		conn, err := net.Listen("tcp", addr)
@@ -22,6 +27,17 @@ func findAvailablePort(startPort int) int {
 			return port
 		}
 	}
+
+	// If no port found in the first range, try from 1024 again
+	for port := 1024; port < startPort; port++ {
+		addr := fmt.Sprintf("127.0.0.1:%d", port)
+		conn, err := net.Listen("tcp", addr)
+		if err == nil {
+			conn.Close()
+			return port
+		}
+	}
+
 	return -1
 }
 
@@ -35,9 +51,8 @@ func main() {
 		fragmentationArgs: *fragmentationArgs,
 	}
 
-	// Find an available port starting from 1080
-	startPort := 1080
-	availablePort := findAvailablePort(startPort)
+	// Find an available port
+	availablePort := findAvailablePort()
 
 	if availablePort == -1 {
 		log.Fatal("Не удалось найти свободный порт.")
@@ -53,10 +68,6 @@ func main() {
 		log.Fatalf("Failed to listen on %s: %v", addr, err)
 	}
 	defer listener.Close()
-
-	if availablePort != startPort {
-		log.Printf("Порт %d занят. Используется порт %d.", startPort, availablePort)
-	}
 
 	log.Printf("SOCKS5 proxy listening on %s", listener.Addr().String())
 
