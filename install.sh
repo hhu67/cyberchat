@@ -12,7 +12,7 @@ cd cyberchat
 
 # Установка Python зависимостей
 echo "Установка Python зависимостей..."
-pip3 install -r client_py/requirements.txt
+pip3 install -r client_py/requirements.txt --break-system-packages
 
 # Компиляция Go кода
 echo "Компиляция Go кода..."
